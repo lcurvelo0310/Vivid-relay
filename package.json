@@ -1,0 +1,12 @@
+{
+  "name": "vivid-relay",
+  "version": "1.0.0",
+  "description": "CORS relay server for VIVID preconstruction tool → Make.com",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
