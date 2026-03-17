@@ -4,387 +4,259 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VIVID Preconstruction Analyzer</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-:root {
-  --vivid-orange: #E85D26;
-  --vivid-dark: #1A1A1A;
-  --vivid-mid: #2E2E2E;
-  --vivid-light: #F5F0E8;
-  --vivid-muted: #8A8A8A;
-  --vivid-green: #2ECC8A;
-  --vivid-red: #E84040;
-  --vivid-amber: #F0A500;
-  --vivid-blue: #3B82F6;
-}
-body { font-family: 'Syne', sans-serif; background: var(--vivid-dark); color: var(--vivid-light); min-height: 100vh; }
-.app-header { border-bottom: 1px solid #333; padding: 20px 32px; display: flex; align-items: center; justify-content: space-between; }
-.logo { display: flex; align-items: center; gap: 12px; }
-.logo-mark { width: 36px; height: 36px; background: var(--vivid-orange); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: white; letter-spacing: -0.5px; }
-.logo-text { font-size: 16px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
-.logo-sub { font-size: 10px; color: var(--vivid-muted); letter-spacing: 0.15em; text-transform: uppercase; font-family: 'DM Mono', monospace; }
-.status-pill { display: flex; align-items: center; gap: 6px; font-family: 'DM Mono', monospace; font-size: 11px; color: var(--vivid-muted); padding: 6px 12px; border: 1px solid #333; border-radius: 20px; }
-.status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--vivid-green); }
-.app-body { padding: 32px; max-width: 1200px; margin: 0 auto; }
-.section-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
-.section-num { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--vivid-orange); font-weight: 500; }
-.section-title { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; }
-.section-sub { font-size: 11px; color: var(--vivid-muted); font-family: 'DM Mono', monospace; margin-left: auto; }
-.plans-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 32px; }
-.upload-card { background: var(--vivid-mid); border: 1px solid #3A3A3A; border-radius: 4px; padding: 18px 16px; cursor: pointer; transition: border-color 0.2s, background 0.2s; display: block; position: relative; overflow: hidden; }
-.upload-card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: #3A3A3A; transition: background 0.2s; }
-.upload-card:hover { border-color: #555; background: #333; }
-.upload-card:hover::before { background: #555; }
-.upload-card.has-file { border-color: #2ECC8A44; background: #1A2E24; }
-.upload-card.has-file::before { background: var(--vivid-green); }
-.upload-card.optional { opacity: 0.65; }
-.upload-card.optional:hover { opacity: 1; }
-.upload-card input[type=file] { display: none; }
-.upload-tag { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--vivid-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
-.upload-card.has-file .upload-tag { color: var(--vivid-green); }
-.upload-name { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
-.upload-hint { font-size: 10px; color: var(--vivid-muted); font-family: 'DM Mono', monospace; }
-.upload-card.has-file .upload-hint { color: #5A9A7A; }
-.upload-size { font-size: 10px; font-family: 'DM Mono', monospace; margin-top: 4px; }
-.size-ok { color: var(--vivid-green); }
-.size-warn { color: var(--vivid-amber); }
-.size-over { color: var(--vivid-red); }
-.ref-banner { background: #1A2E24; border: 1px solid #2ECC8A22; border-radius: 4px; padding: 12px 16px; margin-bottom: 32px; display: flex; align-items: center; gap: 12px; font-family: 'DM Mono', monospace; font-size: 11px; color: #5A9A7A; }
-.ref-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--vivid-green); flex-shrink: 0; }
-.run-section { margin-bottom: 32px; }
-.run-btn { width: 100%; padding: 18px; background: var(--vivid-orange); border: none; border-radius: 4px; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: white; cursor: pointer; transition: opacity 0.2s, transform 0.1s; }
-.run-btn:hover:not(:disabled) { opacity: 0.9; }
-.run-btn:active:not(:disabled) { transform: scale(0.995); }
-.run-btn:disabled { background: #3A3A3A; color: var(--vivid-muted); cursor: not-allowed; }
-.progress-bar-wrap { height: 2px; background: #2E2E2E; margin-bottom: 8px; display: none; }
-.progress-bar-wrap.visible { display: block; }
-.progress-bar { height: 100%; background: var(--vivid-orange); width: 0%; transition: width 0.5s ease; }
-.status-line { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--vivid-muted); min-height: 16px; margin-bottom: 16px; }
-.status-line.active { color: var(--vivid-orange); }
-.msg-banner { padding: 12px 16px; border-radius: 4px; font-family: 'DM Mono', monospace; font-size: 12px; margin-bottom: 16px; display: none; }
-.msg-banner.visible { display: block; }
-.msg-success { background: #1A2E24; border: 1px solid #2ECC8A44; color: var(--vivid-green); }
-.msg-error { background: #2E1A1A; border: 1px solid #E8404044; color: #E84040; }
-.results { display: none; }
-.results.visible { display: block; }
-.results-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #333; }
-.results-title { font-size: 18px; font-weight: 700; }
-.results-type { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--vivid-orange); padding: 4px 10px; border: 1px solid var(--vivid-orange); border-radius: 20px; }
-.tabs { display: flex; border-bottom: 1px solid #333; margin-bottom: 24px; }
-.tab { padding: 10px 20px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; cursor: pointer; color: var(--vivid-muted); border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color 0.15s; }
-.tab:hover { color: var(--vivid-light); }
-.tab.active { color: var(--vivid-light); border-bottom-color: var(--vivid-orange); }
-.tab-content { display: none; }
-.tab-content.active { display: block; }
-.narrative-block { background: var(--vivid-mid); border-left: 3px solid var(--vivid-orange); padding: 20px 24px; border-radius: 0 4px 4px 0; margin-bottom: 24px; font-size: 14px; line-height: 1.7; color: #C8C0B0; }
-.meta-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-.meta-card { background: var(--vivid-mid); border: 1px solid #3A3A3A; border-radius: 4px; padding: 14px 16px; }
-.meta-label { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--vivid-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; }
-.meta-value { font-size: 13px; font-weight: 600; color: var(--vivid-light); }
-.rfi-card { background: var(--vivid-mid); border: 1px solid #3A3A3A; border-radius: 4px; padding: 18px 20px; margin-bottom: 12px; position: relative; overflow: hidden; }
-.rfi-card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; }
-.rfi-critical::before { background: var(--vivid-red); }
-.rfi-high::before { background: var(--vivid-amber); }
-.rfi-medium::before { background: var(--vivid-blue); }
-.rfi-low::before { background: var(--vivid-muted); }
-.rfi-top { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
-.rfi-id { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--vivid-muted); }
-.rfi-badge { font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 2px; text-transform: uppercase; letter-spacing: 0.05em; }
-.badge-critical { background: #2E1A1A; color: var(--vivid-red); border: 1px solid #E8404033; }
-.badge-high { background: #2E2010; color: var(--vivid-amber); border: 1px solid #F0A50033; }
-.badge-medium { background: #1A1E2E; color: var(--vivid-blue); border: 1px solid #3B82F633; }
-.badge-low { background: #252525; color: var(--vivid-muted); border: 1px solid #55555533; }
-.rfi-trade { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--vivid-muted); margin-left: auto; }
-.rfi-question { font-size: 14px; font-weight: 600; margin-bottom: 10px; line-height: 1.5; }
-.rfi-meta-row { display: flex; gap: 20px; flex-wrap: wrap; font-family: 'DM Mono', monospace; font-size: 11px; color: var(--vivid-muted); margin-bottom: 12px; }
-.rfi-meta-row span { display: flex; gap: 6px; }
-.rfi-meta-row span b { color: #888; font-weight: 400; }
-.copy-rfi-btn { font-family: 'DM Mono', monospace; font-size: 11px; padding: 6px 12px; background: transparent; border: 1px solid #3A3A3A; border-radius: 2px; color: var(--vivid-muted); cursor: pointer; transition: border-color 0.15s, color 0.15s; text-transform: uppercase; letter-spacing: 0.05em; }
-.copy-rfi-btn:hover { border-color: #666; color: var(--vivid-light); }
-.json-box { font-family: 'DM Mono', monospace; font-size: 11px; background: #141414; border: 1px solid #333; border-radius: 4px; padding: 20px; max-height: 500px; overflow-y: auto; white-space: pre-wrap; color: #8A9B8A; line-height: 1.6; }
-.action-row { display: flex; gap: 12px; margin-top: 24px; padding-top: 24px; border-top: 1px solid #333; }
-.action-btn { flex: 1; padding: 12px; font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; background: transparent; border: 1px solid #3A3A3A; border-radius: 4px; color: var(--vivid-light); cursor: pointer; transition: border-color 0.15s, background 0.15s; }
-.action-btn:hover:not(:disabled) { border-color: #666; background: #2A2A2A; }
-.action-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-.action-btn.success { border-color: #2ECC8A44; color: var(--vivid-green); background: #1A2E24; }
-.action-btn.error { border-color: #E8404044; color: var(--vivid-red); background: #2E1A1A; }
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--orange:#E85D26;--dark:#1A1A1A;--mid:#2E2E2E;--light:#F5F0E8;--muted:#8A8A8A;--green:#2ECC8A;--red:#E84040;--amber:#F0A500;--blue:#3B82F6}
+body{font-family:'Syne',sans-serif;background:var(--dark);color:var(--light);min-height:100vh}
+.hdr{border-bottom:1px solid #333;padding:20px 32px;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:12px}
+.lmark{width:36px;height:36px;background:var(--orange);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#fff;letter-spacing:-.5px}
+.ltxt{font-size:16px;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+.lsub{font-size:10px;color:var(--muted);letter-spacing:.15em;text-transform:uppercase;font-family:'DM Mono',monospace}
+.spill{display:flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);padding:6px 12px;border:1px solid #333;border-radius:20px}
+.sdot{width:6px;height:6px;border-radius:50%;background:var(--green)}
+.body{padding:32px;max-width:1200px;margin:0 auto}
+.shead{display:flex;align-items:baseline;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.snum{font-family:'DM Mono',monospace;font-size:11px;color:var(--orange);font-weight:500}
+.stitle{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.1em}
+.ssub{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;margin-left:auto}
+.pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.ucard{background:var(--mid);border:1px solid #3A3A3A;border-radius:4px;padding:18px 16px;cursor:pointer;transition:border-color .2s,background .2s;display:block;position:relative;overflow:hidden}
+.ucard::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:#3A3A3A;transition:background .2s}
+.ucard:hover{border-color:#555;background:#333}
+.ucard:hover::before{background:#555}
+.ucard.has-file{border-color:#2ECC8A44;background:#1A2E24}
+.ucard.has-file::before{background:var(--green)}
+.ucard.opt{opacity:.65}
+.ucard.opt:hover{opacity:1}
+.ucard input[type=file]{display:none}
+.utag{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px}
+.ucard.has-file .utag{color:var(--green)}
+.uname{font-size:13px;font-weight:600;margin-bottom:3px}
+.uhint{font-size:10px;color:var(--muted);font-family:'DM Mono',monospace}
+.ucard.has-file .uhint{color:#5A9A7A}
+.usize{font-size:10px;font-family:'DM Mono',monospace;margin-top:4px}
+.sok{color:var(--green)}.swarn{color:var(--amber)}.sover{color:var(--red)}
+.rbanner{background:#1A2E24;border:1px solid #2ECC8A22;border-radius:4px;padding:12px 16px;margin-bottom:32px;display:flex;align-items:center;gap:12px;font-family:'DM Mono',monospace;font-size:11px;color:#5A9A7A}
+.rdot{width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0}
+.runsec{margin-bottom:32px}
+.runbtn{width:100%;padding:18px;background:var(--orange);border:none;border-radius:4px;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:#fff;cursor:pointer;transition:opacity .2s,transform .1s}
+.runbtn:hover:not(:disabled){opacity:.9}
+.runbtn:active:not(:disabled){transform:scale(.995)}
+.runbtn:disabled{background:#3A3A3A;color:var(--muted);cursor:not-allowed}
+.pbwrap{height:2px;background:#2E2E2E;margin-bottom:8px;display:none}
+.pbwrap.vis{display:block}
+.pb{height:100%;background:var(--orange);width:0%;transition:width .5s ease}
+.sline{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);min-height:16px;margin-bottom:16px}
+.sline.act{color:var(--orange)}
+.mbanner{padding:12px 16px;border-radius:4px;font-family:'DM Mono',monospace;font-size:12px;margin-bottom:16px;display:none}
+.mbanner.vis{display:block}
+.msuccess{background:#1A2E24;border:1px solid #2ECC8A44;color:var(--green)}
+.merror{background:#2E1A1A;border:1px solid #E8404044;color:#E84040}
+.results{display:none}
+.results.vis{display:block}
+.rhdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid #333}
+.rtitle{font-size:18px;font-weight:700}
+.rtype{font-family:'DM Mono',monospace;font-size:11px;color:var(--orange);padding:4px 10px;border:1px solid var(--orange);border-radius:20px}
+.tabs{display:flex;border-bottom:1px solid #333;margin-bottom:24px}
+.tab{padding:10px 20px;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .15s}
+.tab:hover{color:var(--light)}
+.tab.act{color:var(--light);border-bottom-color:var(--orange)}
+.tc{display:none}
+.tc.act{display:block}
+.narr{background:var(--mid);border-left:3px solid var(--orange);padding:20px 24px;border-radius:0 4px 4px 0;margin-bottom:24px;font-size:14px;line-height:1.7;color:#C8C0B0}
+.mgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.mc{background:var(--mid);border:1px solid #3A3A3A;border-radius:4px;padding:14px 16px}
+.ml{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}
+.mv{font-size:13px;font-weight:600;color:var(--light)}
+.rfi{background:var(--mid);border:1px solid #3A3A3A;border-radius:4px;padding:18px 20px;margin-bottom:12px;position:relative;overflow:hidden}
+.rfi::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%}
+.rfi-critical::before{background:var(--red)}
+.rfi-high::before{background:var(--amber)}
+.rfi-medium::before{background:var(--blue)}
+.rfi-low::before{background:var(--muted)}
+.rtop{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.rid{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)}
+.rbadge{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;padding:2px 8px;border-radius:2px;text-transform:uppercase;letter-spacing:.05em}
+.bc{background:#2E1A1A;color:var(--red);border:1px solid #E8404033}
+.bh{background:#2E2010;color:var(--amber);border:1px solid #F0A50033}
+.bm{background:#1A1E2E;color:var(--blue);border:1px solid #3B82F633}
+.bl{background:#252525;color:var(--muted);border:1px solid #55555533}
+.rtrade{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-left:auto}
+.rq{font-size:14px;font-weight:600;margin-bottom:10px;line-height:1.5}
+.rmeta{display:flex;gap:20px;flex-wrap:wrap;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-bottom:12px}
+.rmeta span{display:flex;gap:6px}
+.rmeta span b{color:#888;font-weight:400}
+.cbtn{font-family:'DM Mono',monospace;font-size:11px;padding:6px 12px;background:transparent;border:1px solid #3A3A3A;border-radius:2px;color:var(--muted);cursor:pointer;transition:border-color .15s,color .15s;text-transform:uppercase;letter-spacing:.05em}
+.cbtn:hover{border-color:#666;color:var(--light)}
+.jbox{font-family:'DM Mono',monospace;font-size:11px;background:#141414;border:1px solid #333;border-radius:4px;padding:20px;max-height:500px;overflow-y:auto;white-space:pre-wrap;color:#8A9B8A;line-height:1.6}
+.arow{display:flex;gap:12px;margin-top:24px;padding-top:24px;border-top:1px solid #333}
+.abtn{flex:1;padding:12px;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;background:transparent;border:1px solid #3A3A3A;border-radius:4px;color:var(--light);cursor:pointer;transition:border-color .15s,background .15s}
+.abtn:hover:not(:disabled){border-color:#666;background:#2A2A2A}
+.abtn:disabled{opacity:.4;cursor:not-allowed}
+.abtn.ok{border-color:#2ECC8A44;color:var(--green);background:#1A2E24}
+.abtn.err{border-color:#E8404044;color:var(--red);background:#2E1A1A}
 </style>
 </head>
 <body>
-
-<div class="app-header">
+<div class="hdr">
   <div class="logo">
-    <div class="logo-mark">VCG</div>
-    <div>
-      <div class="logo-text">VIVID Construction Group</div>
-      <div class="logo-sub">Preconstruction Analyzer</div>
-    </div>
+    <div class="lmark">VCG</div>
+    <div><div class="ltxt">VIVID Construction Group</div><div class="lsub">Preconstruction Analyzer</div></div>
   </div>
-  <div class="status-pill">
-    <div class="status-dot"></div>
-    Relay online
-  </div>
+  <div class="spill"><div class="sdot"></div>Relay online</div>
 </div>
-
-<div class="app-body">
-
-  <div class="section-head">
-    <span class="section-num">01 —</span>
-    <span class="section-title">Project Plans</span>
-    <span class="section-sub">Up to 8 files · 32MB max each · at least 1 required</span>
+<div class="body">
+  <div class="shead">
+    <span class="snum">01 —</span>
+    <span class="stitle">Project Plans</span>
+    <span class="ssub">Up to 8 files · 32MB max each · at least 1 required</span>
   </div>
-
-  <div class="plans-grid">
-    <label class="upload-card" id="card-p1"><div class="upload-tag">Plans 1</div><div class="upload-name">Plan Set A</div><div class="upload-hint" id="sub-p1">Click to upload PDF</div><div class="upload-size" id="size-p1"></div><input type="file" accept=".pdf" id="file-p1" onchange="handlePlan(this,'p1')"></label>
-    <label class="upload-card optional" id="card-p2"><div class="upload-tag">Plans 2</div><div class="upload-name">Plan Set B</div><div class="upload-hint" id="sub-p2">Click to upload PDF</div><div class="upload-size" id="size-p2"></div><input type="file" accept=".pdf" id="file-p2" onchange="handlePlan(this,'p2')"></label>
-    <label class="upload-card optional" id="card-p3"><div class="upload-tag">Plans 3</div><div class="upload-name">Plan Set C</div><div class="upload-hint" id="sub-p3">Click to upload PDF</div><div class="upload-size" id="size-p3"></div><input type="file" accept=".pdf" id="file-p3" onchange="handlePlan(this,'p3')"></label>
-    <label class="upload-card optional" id="card-p4"><div class="upload-tag">Plans 4</div><div class="upload-name">Plan Set D</div><div class="upload-hint" id="sub-p4">Click to upload PDF</div><div class="upload-size" id="size-p4"></div><input type="file" accept=".pdf" id="file-p4" onchange="handlePlan(this,'p4')"></label>
-    <label class="upload-card optional" id="card-p5"><div class="upload-tag">Plans 5</div><div class="upload-name">Plan Set E</div><div class="upload-hint" id="sub-p5">Click to upload PDF</div><div class="upload-size" id="size-p5"></div><input type="file" accept=".pdf" id="file-p5" onchange="handlePlan(this,'p5')"></label>
-    <label class="upload-card optional" id="card-p6"><div class="upload-tag">Plans 6</div><div class="upload-name">Plan Set F</div><div class="upload-hint" id="sub-p6">Click to upload PDF</div><div class="upload-size" id="size-p6"></div><input type="file" accept=".pdf" id="file-p6" onchange="handlePlan(this,'p6')"></label>
-    <label class="upload-card optional" id="card-p7"><div class="upload-tag">Plans 7</div><div class="upload-name">Plan Set G</div><div class="upload-hint" id="sub-p7">Click to upload PDF</div><div class="upload-size" id="size-p7"></div><input type="file" accept=".pdf" id="file-p7" onchange="handlePlan(this,'p7')"></label>
-    <label class="upload-card optional" id="card-p8"><div class="upload-tag">Plans 8</div><div class="upload-name">Plan Set H</div><div class="upload-hint" id="sub-p8">Click to upload PDF</div><div class="upload-size" id="size-p8"></div><input type="file" accept=".pdf" id="file-p8" onchange="handlePlan(this,'p8')"></label>
+  <div class="pgrid">
+    <label class="ucard" id="cp1"><div class="utag">Plans 1</div><div class="uname">Plan Set A</div><div class="uhint" id="sp1">Click to upload PDF</div><div class="usize" id="sz1"></div><input type="file" accept=".pdf" onchange="hp(this,'p1')"></label>
+    <label class="ucard opt" id="cp2"><div class="utag">Plans 2</div><div class="uname">Plan Set B</div><div class="uhint" id="sp2">Click to upload PDF</div><div class="usize" id="sz2"></div><input type="file" accept=".pdf" onchange="hp(this,'p2')"></label>
+    <label class="ucard opt" id="cp3"><div class="utag">Plans 3</div><div class="uname">Plan Set C</div><div class="uhint" id="sp3">Click to upload PDF</div><div class="usize" id="sz3"></div><input type="file" accept=".pdf" onchange="hp(this,'p3')"></label>
+    <label class="ucard opt" id="cp4"><div class="utag">Plans 4</div><div class="uname">Plan Set D</div><div class="uhint" id="sp4">Click to upload PDF</div><div class="usize" id="sz4"></div><input type="file" accept=".pdf" onchange="hp(this,'p4')"></label>
+    <label class="ucard opt" id="cp5"><div class="utag">Plans 5</div><div class="uname">Plan Set E</div><div class="uhint" id="sp5">Click to upload PDF</div><div class="usize" id="sz5"></div><input type="file" accept=".pdf" onchange="hp(this,'p5')"></label>
+    <label class="ucard opt" id="cp6"><div class="utag">Plans 6</div><div class="uname">Plan Set F</div><div class="uhint" id="sp6">Click to upload PDF</div><div class="usize" id="sz6"></div><input type="file" accept=".pdf" onchange="hp(this,'p6')"></label>
+    <label class="ucard opt" id="cp7"><div class="utag">Plans 7</div><div class="uname">Plan Set G</div><div class="uhint" id="sp7">Click to upload PDF</div><div class="usize" id="sz7"></div><input type="file" accept=".pdf" onchange="hp(this,'p7')"></label>
+    <label class="ucard opt" id="cp8"><div class="utag">Plans 8</div><div class="uname">Plan Set H</div><div class="uhint" id="sp8">Click to upload PDF</div><div class="usize" id="sz8"></div><input type="file" accept=".pdf" onchange="hp(this,'p8')"></label>
   </div>
-
-  <div class="ref-banner">
-    <div class="ref-dot"></div>
-    Scope Playbook + Project Rules loaded automatically by server
+  <div class="rbanner"><div class="rdot"></div>Scope Playbook + Project Rules loaded automatically by server</div>
+  <div class="shead"><span class="snum">02 —</span><span class="stitle">Run Analysis</span></div>
+  <div class="runsec">
+    <div class="pbwrap" id="pw"><div class="pb" id="pb"></div></div>
+    <div class="sline" id="sl">Upload at least 1 plan file to begin</div>
+    <button class="runbtn" id="rb" onclick="run()" disabled>Run Preconstruction Analysis</button>
   </div>
-
-  <div class="section-head">
-    <span class="section-num">02 —</span>
-    <span class="section-title">Run Analysis</span>
-  </div>
-
-  <div class="run-section">
-    <div class="progress-bar-wrap" id="progress-wrap"><div class="progress-bar" id="progress-bar"></div></div>
-    <div class="status-line" id="status-line">Upload at least 1 plan set to begin</div>
-    <button class="run-btn" id="run-btn" onclick="runAnalysis()" disabled>Run Preconstruction Analysis</button>
-  </div>
-
-  <div class="msg-banner" id="msg-banner"></div>
-
-  <div class="results" id="results">
-    <div class="results-header">
-      <div class="results-title" id="results-title">Analysis Results</div>
-      <div class="results-type" id="results-type">—</div>
-    </div>
+  <div class="mbanner" id="mb"></div>
+  <div class="results" id="res">
+    <div class="rhdr"><div class="rtitle" id="rtn">Analysis Results</div><div class="rtype" id="rtp">—</div></div>
     <div class="tabs">
-      <div class="tab active" onclick="switchTab('summary')">Summary</div>
-      <div class="tab" onclick="switchTab('rfis')">RFIs & RFPs</div>
-      <div class="tab" onclick="switchTab('json')">JSON Output</div>
+      <div class="tab act" onclick="st('summary')">Summary</div>
+      <div class="tab" onclick="st('rfis')">RFIs & RFPs</div>
+      <div class="tab" onclick="st('json')">JSON Output</div>
     </div>
-    <div class="tab-content active" id="tab-summary">
-      <div class="narrative-block" id="proj-narrative">—</div>
-      <div class="meta-grid" id="meta-grid"></div>
-    </div>
-    <div class="tab-content" id="tab-rfis"><div id="rfi-list"></div></div>
-    <div class="tab-content" id="tab-json"><div class="json-box" id="json-box"></div></div>
-    <div class="action-row">
-      <button class="action-btn" id="copy-btn" onclick="copyJSON()">Copy JSON</button>
-      <button class="action-btn" id="webhook-btn" onclick="sendWebhook()">Resend to Make.com</button>
+    <div class="tc act" id="t-summary"><div class="narr" id="narr">—</div><div class="mgrid" id="mg"></div></div>
+    <div class="tc" id="t-rfis"><div id="rl"></div></div>
+    <div class="tc" id="t-json"><div class="jbox" id="jb"></div></div>
+    <div class="arow">
+      <button class="abtn" id="cpb" onclick="cpj()">Copy JSON</button>
+      <button class="abtn" id="wb" onclick="send()">Resend to Make.com</button>
     </div>
   </div>
-
 </div>
-
 <script>
-const MAKE_WEBHOOK = 'https://hook.us2.make.com/vrkmnwcc2lwqsg4pu8rr5x3uo3akthhx';
-const MAX_MB = 32;
-const planKeys = ['p1','p2','p3','p4','p5','p6','p7','p8'];
-const plans = {};
-let resultJSON = null;
+const MAKE='https://hook.us2.make.com/vrkmnwcc2lwqsg4pu8rr5x3uo3akthhx';
+const KEYS=['p1','p2','p3','p4','p5','p6','p7','p8'];
+const plans={};
+let rj=null;
 
-function formatMB(bytes) { return (bytes/1024/1024).toFixed(1)+' MB'; }
-
-function handlePlan(input, key) {
-  const file = input.files[0];
-  if (!file) return;
-  const mb = file.size/1024/1024;
-  const sizeEl = document.getElementById('size-'+key);
-  if (mb > MAX_MB) {
-    sizeEl.textContent = formatMB(file.size)+' — OVER 32MB LIMIT';
-    sizeEl.className = 'upload-size size-over';
-    input.value = '';
-    return;
-  }
-  plans[key] = file;
-  document.getElementById('card-'+key).classList.add('has-file');
-  document.getElementById('card-'+key).classList.remove('optional');
-  document.getElementById('sub-'+key).textContent = file.name.length > 22 ? file.name.slice(0,20)+'…' : file.name;
-  sizeEl.textContent = formatMB(file.size);
-  sizeEl.className = 'upload-size '+(mb > 25 ? 'size-warn' : 'size-ok');
-  checkReady();
+function hp(inp,k){
+  const f=inp.files[0];if(!f)return;
+  const mb=f.size/1024/1024;
+  const si=KEYS.indexOf(k)+1;
+  const sz=document.getElementById('sz'+si);
+  if(mb>32){sz.textContent=(mb).toFixed(1)+' MB — OVER LIMIT';sz.className='usize sover';inp.value='';return;}
+  plans[k]=f;
+  document.getElementById('c'+k).classList.add('has-file');
+  document.getElementById('c'+k).classList.remove('opt');
+  document.getElementById('s'+k).textContent=f.name.length>22?f.name.slice(0,20)+'…':f.name;
+  sz.textContent=(mb).toFixed(1)+' MB';
+  sz.className='usize '+(mb>25?'swarn':'sok');
+  cr();
 }
 
-function checkReady() {
-  const hasPlans = planKeys.some(k => plans[k]);
-  document.getElementById('run-btn').disabled = !hasPlans;
-  if (hasPlans) {
-    const count = planKeys.filter(k => plans[k]).length;
-    setStatus(count+' plan file'+(count>1?'s':'')+' loaded — ready to analyze', false);
-  }
+function cr(){
+  const has=KEYS.some(k=>plans[k]);
+  document.getElementById('rb').disabled=!has;
+  if(has){const c=KEYS.filter(k=>plans[k]).length;ss(c+' plan file'+(c>1?'s':'')+' loaded — ready to analyze',false);}
 }
 
-function switchTab(name) {
-  ['summary','rfis','json'].forEach((n,i) => document.querySelectorAll('.tab')[i].classList.toggle('active', n===name));
-  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-  document.getElementById('tab-'+name).classList.add('active');
+function st(n){
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('act',['summary','rfis','json'][i]===n));
+  document.querySelectorAll('.tc').forEach(c=>c.classList.remove('act'));
+  document.getElementById('t-'+n).classList.add('act');
 }
 
-function setStatus(text, active) {
-  const el = document.getElementById('status-line');
-  el.textContent = text;
-  el.classList.toggle('active', active);
+function ss(t,a){const e=document.getElementById('sl');e.textContent=t;e.classList.toggle('act',a);}
+function sp(p){document.getElementById('pw').classList.toggle('vis',p>0&&p<100);document.getElementById('pb').style.width=p+'%';}
+function sm(t,tp){const e=document.getElementById('mb');e.textContent=t;e.className='mbanner vis m'+tp;}
+function hm(){document.getElementById('mb').classList.remove('vis');}
+
+async function b64(f){return new Promise((r,j)=>{const x=new FileReader();x.onload=()=>r(x.result.split(',')[1]);x.onerror=j;x.readAsDataURL(f);});}
+
+async function run(){
+  const btn=document.getElementById('rb');
+  btn.disabled=true;btn.textContent='Analyzing…';hm();sp(5);
+  const active=KEYS.filter(k=>plans[k]);
+  const steps=[[10,'Reading project plans…'],[25,'Applying VIVID standards…'],[45,'Identifying RFIs and hard stops…'],[65,'Building takeoff packages…'],[80,'Generating master JSON…'],[92,'Finalizing output…']];
+  let si=0;ss(steps[0][1],true);sp(steps[0][0]);
+  const t=setInterval(()=>{si=Math.min(si+1,steps.length-1);ss(steps[si][1],true);sp(steps[si][0]);},9000);
+  try{
+    const b64s=await Promise.all(active.map(k=>b64(plans[k])));
+    const planDocs=b64s.map((d,i)=>({type:'document',source:{type:'base64',media_type:'application/pdf',data:d},title:'Project Plans '+(i+1)+' of '+active.length}));
+    const systemPrompt=`You are the VIVID Construction Group preconstruction analysis AI. Analyze all provided documents and produce ONLY a single valid JSON object. No markdown, no backticks, no explanation — only raw JSON.\n\nSchema:\n{"plain_english_summary":{"project_name":"string","project_type":"string","narrative":"string","critical_rfi_summary":["string"]},"project_identity":{"project_name":"string","project_address":"string","owner_name":"string","building_type":"string","construction_type":"string","stories":0,"gross_sf":0,"key_or_unit_count":0,"structural_system":"string","exterior_envelope_summary":"string","hvac_system_summary":"string","permit_status":"string"},"critical_rfis":[{"rfi_number":"string","priority":"Critical|High|Medium|Low","trade_affected":"string","question":"string","cost_impact_range":"string","source_sheet":"string","directed_to":"string","status":"Open"}],"gantt_logic":{"tasks":[{"id":0,"phase_id":"string","text":"string","start_date":"YYYY-MM-DD","duration":0,"parent":0,"type":"task|project|milestone","open":true,"vivid_hard_stop":false}],"links":[{"id":0,"source":0,"target":0,"type":"0"}]},"takeoff_packages":[{"id":"string","order":0,"division":"string","name":"string","color":"string","groups":[{"type":"AREA|LINEAR|COUNT|VOLUME","items":[{"id":"string","linked_gantt_id":0,"name":"string","unit":"SF|LF|CY|EA|LS","sourceSheet":"string","notes":"string"}]}]}]}\n\nRULES: takeoff_packages ordered by construction sequence. Every gantt task has phase_id 01-11. Every takeoff item has linked_gantt_id. Output ONLY JSON.`;
+
+    const r=await fetch('/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({planDocs,activePlanCount:active.length,systemPrompt})});
+    clearInterval(t);sp(95);
+    if(!r.ok){const e=await r.json();throw new Error(e.error||'API error '+r.status);}
+    const d=await r.json();
+    const raw=d.content.map(b=>b.text||'').join('').trim();
+    const clean=raw.replace(/^```json\s*/,'').replace(/^```\s*/,'').replace(/```\s*$/,'').trim();
+    rj=JSON.parse(clean);
+    sp(100);render(rj);ss('Analysis complete',false);sp(0);
+    ss('Sending to Make.com…',true);
+    try{
+      await fetch('/relay',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({_webhookUrl:MAKE,_data:rj})});
+      ss('Analysis complete — sent to Make.com',false);
+      sm('✓ JSON delivered to Make.com. Your Google Drive project folder is being created.','success');
+    }catch(we){ss('Analysis complete — webhook failed',false);sm('Analysis done but Make.com failed: '+we.message,'error');}
+  }catch(e){clearInterval(t);sp(0);ss('Analysis failed',false);sm('Error: '+e.message,'error');}
+  btn.disabled=false;btn.textContent='Run Preconstruction Analysis';
 }
 
-function setProgress(pct) {
-  document.getElementById('progress-wrap').classList.toggle('visible', pct>0 && pct<100);
-  document.getElementById('progress-bar').style.width = pct+'%';
+function render(j){
+  const s=j.plain_english_summary||{},p=j.project_identity||{};
+  document.getElementById('rtn').textContent=s.project_name||'Analysis Results';
+  document.getElementById('rtp').textContent=s.project_type||'—';
+  document.getElementById('narr').textContent=s.narrative||'—';
+  const mf=[['Address',p.project_address],['Owner',p.owner_name],['Construction type',p.construction_type],['Stories',p.stories],['Gross SF',p.gross_sf?p.gross_sf.toLocaleString()+' SF':'—'],['Units/keys',p.key_or_unit_count],['Structural',p.structural_system],['HVAC',p.hvac_system_summary],['Permit',p.permit_status]];
+  document.getElementById('mg').innerHTML=mf.map(([l,v])=>`<div class="mc"><div class="ml">${l}</div><div class="mv">${v||'—'}</div></div>`).join('');
+  const rl=document.getElementById('rl');rl.innerHTML='';
+  (j.critical_rfis||[]).forEach(r=>{
+    const pr=(r.priority||'medium').toLowerCase();
+    const d=document.createElement('div');d.className='rfi rfi-'+pr;
+    d.innerHTML=`<div class="rtop"><span class="rid">${r.rfi_number}</span><span class="rbadge b${pr.charAt(0)}">${r.priority}</span><span class="rtrade">${r.trade_affected}</span></div><div class="rq">${r.question}</div><div class="rmeta"><span><b>Sheet </b>${r.source_sheet||'—'}</span><span><b>To </b>${r.directed_to||'—'}</span><span><b>Cost </b>${r.cost_impact_range||'—'}</span><span><b>Status </b>${r.status}</span></div><button class="cbtn" onclick='crfi(this,${JSON.stringify(r)})'>Copy for Building Connected</button>`;
+    rl.appendChild(d);
+  });
+  document.getElementById('jb').textContent=JSON.stringify(j,null,2);
+  document.getElementById('res').classList.add('vis');
+  st('summary');
 }
 
-function showMsg(text, type) {
-  const el = document.getElementById('msg-banner');
-  el.textContent = text;
-  el.className = 'msg-banner visible msg-'+type;
+function crfi(btn,r){
+  const t=`RFI ${r.rfi_number} — ${r.priority}\nTrade: ${r.trade_affected}\nQuestion: ${r.question}\nSource sheet: ${r.source_sheet}\nDirected to: ${r.directed_to}\nCost impact: ${r.cost_impact_range}\nStatus: ${r.status}`;
+  navigator.clipboard.writeText(t).then(()=>{const o=btn.textContent;btn.textContent='Copied!';setTimeout(()=>btn.textContent=o,1500);});
 }
 
-function hideMsg() { document.getElementById('msg-banner').classList.remove('visible'); }
-
-async function toBase64(file) {
-  return new Promise((res,rej) => {
-    const r = new FileReader();
-    r.onload = () => res(r.result.split(',')[1]);
-    r.onerror = rej;
-    r.readAsDataURL(file);
+function cpj(){
+  if(!rj)return;
+  navigator.clipboard.writeText(JSON.stringify(rj,null,2)).then(()=>{
+    const b=document.getElementById('cpb');b.textContent='Copied!';b.classList.add('ok');
+    setTimeout(()=>{b.textContent='Copy JSON';b.classList.remove('ok');},2000);
   });
 }
 
-async function postRelay(data) {
-  const res = await fetch('/relay', {
-    method: 'POST',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({_webhookUrl: MAKE_WEBHOOK, _data: data})
-  });
-  if (!res.ok) throw new Error('Relay responded with '+res.status);
-  return await res.json();
-}
-
-async function runAnalysis() {
-  const btn = document.getElementById('run-btn');
-  btn.disabled = true;
-  btn.textContent = 'Analyzing…';
-  hideMsg();
-  setProgress(5);
-  const activePlans = planKeys.filter(k => plans[k]);
-  const steps = [[10,'Reading project plans…'],[25,'Applying VIVID standards…'],[45,'Identifying RFIs and hard stops…'],[65,'Building takeoff packages…'],[80,'Generating master JSON…'],[92,'Finalizing output…']];
-  let si = 0;
-  setStatus(steps[0][1], true);
-  setProgress(steps[0][0]);
-  const stepTimer = setInterval(() => { si=Math.min(si+1,steps.length-1); setStatus(steps[si][1],true); setProgress(steps[si][0]); }, 9000);
-
-  try {
-    const planB64s = await Promise.all(activePlans.map(k => toBase64(plans[k])));
-
-    const planDocs = planB64s.map((b64,i) => ({
-      type: 'document',
-      source: {type:'base64', media_type:'application/pdf', data:b64},
-      title: `Project Plans ${i+1} of ${activePlans.length}`
-    }));
-
-    const systemPrompt = `You are the VIVID Construction Group preconstruction analysis AI. You will be provided with ${activePlans.length} plan PDF file(s), the VIVID Master Scope Playbook, and the VIVID Universal Project Rules. Analyze ALL documents together as a complete set and produce ONLY a single valid JSON object that strictly conforms to the VIVID Master Schema v3. No markdown, no backticks, no explanation — only raw JSON.
-
-Schema:
-{"plain_english_summary":{"project_name":"string","project_type":"string","narrative":"string (2-3 paragraph summary)","critical_rfi_summary":["string"]},"project_identity":{"project_name":"string","project_address":"string","owner_name":"string","building_type":"string","construction_type":"string","stories":0,"gross_sf":0,"key_or_unit_count":0,"structural_system":"string","exterior_envelope_summary":"string","hvac_system_summary":"string","permit_status":"string"},"critical_rfis":[{"rfi_number":"string","priority":"Critical|High|Medium|Low","trade_affected":"string","question":"string","cost_impact_range":"string","source_sheet":"string","directed_to":"string","status":"Open"}],"gantt_logic":{"tasks":[{"id":0,"phase_id":"string (01-11)","text":"string","start_date":"YYYY-MM-DD","duration":0,"parent":0,"type":"task|project|milestone","open":true,"vivid_hard_stop":false}],"links":[{"id":0,"source":0,"target":0,"type":"0"}]},"takeoff_packages":[{"id":"string","order":0,"division":"string","name":"string","color":"string (hex)","groups":[{"type":"AREA|LINEAR|COUNT|VOLUME","items":[{"id":"string","linked_gantt_id":0,"name":"string","unit":"SF|LF|CY|EA|LS","sourceSheet":"string","notes":"string"}]}]}]}
-
-CRITICAL RULES: 1. takeoff_packages MUST be ordered by construction sequence. 2. Every gantt task must have phase_id 01-11. 3. Every takeoff item must have linked_gantt_id. 4. Output ONLY the JSON object.`;
-
-    const response = await fetch('/analyze', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ planDocs, activePlanCount: activePlans.length, systemPrompt })
-    });
-
-    clearInterval(stepTimer);
-    setProgress(95);
-    if (!response.ok) { const err = await response.json(); throw new Error(err.error?.message||err.error||'API error '+response.status); }
-    const data = await response.json();
-    const rawText = data.content.map(b=>b.text||'').join('').trim();
-    const cleaned = rawText.replace(/^```json\s*/,'').replace(/^```\s*/,'').replace(/```\s*$/,'').trim();
-    resultJSON = JSON.parse(cleaned);
-    setProgress(100);
-    renderResults(resultJSON);
-    setStatus('Analysis complete', false);
-    setProgress(0);
-    setStatus('Sending to Make.com…', true);
-    try {
-      await postRelay(resultJSON);
-      setStatus('Analysis complete — sent to Make.com', false);
-      showMsg('✓ JSON delivered to Make.com. Your Google Drive project folder is being created.', 'success');
-    } catch(we) {
-      setStatus('Analysis complete — webhook failed', false);
-      showMsg('Analysis done but Make.com delivery failed: '+we.message+'. Use Resend below.', 'error');
-    }
-  } catch(e) {
-    clearInterval(stepTimer);
-    setProgress(0);
-    setStatus('Analysis failed', false);
-    showMsg('Error: '+e.message, 'error');
-  }
-  btn.disabled = false;
-  btn.textContent = 'Run Preconstruction Analysis';
-}
-
-function renderResults(json) {
-  const s = json.plain_english_summary||{};
-  const p = json.project_identity||{};
-  document.getElementById('results-title').textContent = s.project_name||'Analysis Results';
-  document.getElementById('results-type').textContent = s.project_type||'—';
-  document.getElementById('proj-narrative').textContent = s.narrative||'—';
-  const metaFields = [['Address',p.project_address],['Owner',p.owner_name],['Construction type',p.construction_type],['Stories',p.stories],['Gross SF',p.gross_sf?p.gross_sf.toLocaleString()+' SF':'—'],['Units / keys',p.key_or_unit_count],['Structural system',p.structural_system],['HVAC system',p.hvac_system_summary],['Permit status',p.permit_status]];
-  document.getElementById('meta-grid').innerHTML = metaFields.map(([l,v])=>`<div class="meta-card"><div class="meta-label">${l}</div><div class="meta-value">${v||'—'}</div></div>`).join('');
-  const rfiList = document.getElementById('rfi-list');
-  rfiList.innerHTML = '';
-  (json.critical_rfis||[]).forEach(rfi => {
-    const pr = (rfi.priority||'medium').toLowerCase();
-    const div = document.createElement('div');
-    div.className = `rfi-card rfi-${pr}`;
-    div.innerHTML = `<div class="rfi-top"><span class="rfi-id">${rfi.rfi_number}</span><span class="rfi-badge badge-${pr}">${rfi.priority}</span><span class="rfi-trade">${rfi.trade_affected}</span></div><div class="rfi-question">${rfi.question}</div><div class="rfi-meta-row"><span><b>Sheet </b>${rfi.source_sheet||'—'}</span><span><b>To </b>${rfi.directed_to||'—'}</span><span><b>Cost impact </b>${rfi.cost_impact_range||'—'}</span><span><b>Status </b>${rfi.status}</span></div><button class="copy-rfi-btn" onclick='copyRFI(this,${JSON.stringify(rfi)})'>Copy for Building Connected</button>`;
-    rfiList.appendChild(div);
-  });
-  document.getElementById('json-box').textContent = JSON.stringify(json, null, 2);
-  document.getElementById('results').classList.add('visible');
-  switchTab('summary');
-}
-
-function copyRFI(btn, rfi) {
-  const text = `RFI ${rfi.rfi_number} — ${rfi.priority}\nTrade: ${rfi.trade_affected}\nQuestion: ${rfi.question}\nSource sheet: ${rfi.source_sheet}\nDirected to: ${rfi.directed_to}\nCost impact: ${rfi.cost_impact_range}\nStatus: ${rfi.status}`;
-  navigator.clipboard.writeText(text).then(() => { const o=btn.textContent; btn.textContent='Copied!'; setTimeout(()=>btn.textContent=o,1500); });
-}
-
-function copyJSON() {
-  if (!resultJSON) return;
-  navigator.clipboard.writeText(JSON.stringify(resultJSON,null,2)).then(()=>{
-    const btn=document.getElementById('copy-btn');
-    btn.textContent='Copied!'; btn.classList.add('success');
-    setTimeout(()=>{btn.textContent='Copy JSON';btn.classList.remove('success');},2000);
-  });
-}
-
-async function sendWebhook() {
-  if (!resultJSON) return;
-  const btn = document.getElementById('webhook-btn');
-  btn.textContent='Sending…'; btn.disabled=true;
-  try {
-    await postRelay(resultJSON);
-    btn.textContent='Sent!'; btn.classList.add('success');
-    showMsg('✓ JSON resent to Make.com successfully.','success');
-  } catch(e) {
-    btn.textContent='Failed'; btn.classList.add('error');
-    showMsg('Webhook failed: '+e.message,'error');
-  }
-  setTimeout(()=>{btn.textContent='Resend to Make.com';btn.classList.remove('success','error');btn.disabled=false;},3000);
+async function send(){
+  if(!rj)return;
+  const b=document.getElementById('wb');b.textContent='Sending…';b.disabled=true;
+  try{
+    await fetch('/relay',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({_webhookUrl:MAKE,_data:rj})});
+    b.textContent='Sent!';b.classList.add('ok');sm('✓ Resent to Make.com.','success');
+  }catch(e){b.textContent='Failed';b.classList.add('err');sm('Webhook failed: '+e.message,'error');}
+  setTimeout(()=>{b.textContent='Resend to Make.com';b.classList.remove('ok','err');b.disabled=false;},3000);
 }
 </script>
 </body>
