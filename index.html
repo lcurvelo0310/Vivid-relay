@@ -198,12 +198,12 @@ body { font-family: 'Syne', sans-serif; background: var(--vivid-dark); color: va
 </div>
 
 <script>
-const RELAY_URL = 'https://vivid-relay-production.up.railway.app/relay';
+
 const MAKE_WEBHOOK = 'https://hook.us2.make.com/vrkmnwcc2lwqsg4pu8rr5x3uo3akthhx';
 const MAX_MB = 32;
 const planKeys = ['p1','p2','p3','p4','p5','p6','p7','p8'];
 const plans = {};
-const refs = { playbook: null, rules: null };
+
 let resultJSON = null;
 
 function formatMB(bytes) { return (bytes/1024/1024).toFixed(1)+' MB'; }
@@ -239,12 +239,11 @@ function handleRef(input, key) {
 
 function checkReady() {
   const hasPlans = planKeys.some(k => plans[k]);
-  const ready = hasPlans && refs.playbook && refs.rules;
+  const ready = hasPlans;
   document.getElementById('run-btn').disabled = !ready;
   if (ready) {
     const count = planKeys.filter(k => plans[k]).length;
-    setStatus(count+' plan file'+(count>1?'s':'')+' + reference docs loaded — ready to analyze', false);
-  }
+setStatus(count+' plan file'+(count>1?'s':'')+' loaded — ready to analyze', false);  }
 }
 
 function switchTab(name) {
