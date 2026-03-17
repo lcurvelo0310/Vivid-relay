@@ -1,12 +1,15 @@
 const http = require('http');
 const https = require('https');
+const fs = require('fs');
+const path = require('path');
 
 const PORT = process.env.PORT || 3000;
-const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || '*';
+
+const HTML = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8');
 
 const server = http.createServer((req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', ALLOWED_ORIGIN);
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') {
@@ -15,14 +18,25 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  if (req.method === 'GET' && req.url === '/') {
+    res.writeHead(200, { 'Content-Type': 'text/html' });
+    res.end(HTML);
+    return;
+  }
+
+  if (req.method === 'GET' && req.url === '/health') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ status: 'ok' }));
+    return;
+  }
+
   if (req.method === 'POST' && req.url === '/relay') {
     let body = '';
     req.on('data', chunk => body += chunk.toString());
     req.on('end', () => {
       let payload;
-      try {
-        payload = JSON.parse(body);
-      } catch (e) {
+      try { payload = JSON.parse(body); }
+      catch (e) {
         res.writeHead(400, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ error: 'Invalid JSON' }));
         return;
@@ -38,9 +52,8 @@ const server = http.createServer((req, res) => {
       }
 
       let parsedUrl;
-      try {
-        parsedUrl = new URL(webhookUrl);
-      } catch (e) {
+      try { parsedUrl = new URL(webhookUrl); }
+      catch (e) {
         res.writeHead(400, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ error: 'Invalid webhook URL' }));
         return;
@@ -48,7 +61,7 @@ const server = http.createServer((req, res) => {
 
       if (!parsedUrl.hostname.endsWith('make.com')) {
         res.writeHead(403, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: 'Only make.com webhooks are allowed' }));
+        res.end(JSON.stringify({ error: 'Only make.com webhooks allowed' }));
         return;
       }
 
@@ -68,11 +81,7 @@ const server = http.createServer((req, res) => {
         proxyRes.on('data', chunk => responseBody += chunk.toString());
         proxyRes.on('end', () => {
           res.writeHead(proxyRes.statusCode, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({
-            success: true,
-            makeStatus: proxyRes.statusCode,
-            makeResponse: responseBody
-          }));
+          res.end(JSON.stringify({ success: true, makeStatus: proxyRes.statusCode }));
         });
       });
 
@@ -87,16 +96,10 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  if (req.method === 'GET' && req.url === '/health') {
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ status: 'ok', service: 'VIVID relay' }));
-    return;
-  }
-
   res.writeHead(404, { 'Content-Type': 'application/json' });
   res.end(JSON.stringify({ error: 'Not found' }));
 });
 
 server.listen(PORT, () => {
-  console.log(`VIVID relay server running on port ${PORT}`);
+  console.log(`VIVID server running on port ${PORT}`);
 });
