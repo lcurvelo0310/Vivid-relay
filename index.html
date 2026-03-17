@@ -321,7 +321,7 @@ Schema:
 
 CRITICAL RULES: 1. takeoff_packages MUST be ordered by construction sequence. 2. Every gantt task must have phase_id 01-11. 3. Every takeoff item must have linked_gantt_id. 4. Output ONLY the JSON object.`;
 
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch('/analyze', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({
