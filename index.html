@@ -32,8 +32,7 @@ body { font-family: 'Syne', sans-serif; background: var(--vivid-dark); color: va
 .section-num { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--vivid-orange); font-weight: 500; }
 .section-title { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; }
 .section-sub { font-size: 11px; color: var(--vivid-muted); font-family: 'DM Mono', monospace; margin-left: auto; }
-.plans-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
-.ref-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 32px; }
+.plans-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 32px; }
 .upload-card { background: var(--vivid-mid); border: 1px solid #3A3A3A; border-radius: 4px; padding: 18px 16px; cursor: pointer; transition: border-color 0.2s, background 0.2s; display: block; position: relative; overflow: hidden; }
 .upload-card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: #3A3A3A; transition: background 0.2s; }
 .upload-card:hover { border-color: #555; background: #333; }
@@ -52,7 +51,8 @@ body { font-family: 'Syne', sans-serif; background: var(--vivid-dark); color: va
 .size-ok { color: var(--vivid-green); }
 .size-warn { color: var(--vivid-amber); }
 .size-over { color: var(--vivid-red); }
-.divider { border: none; border-top: 1px solid #333; margin: 8px 0 24px; }
+.ref-banner { background: #1A2E24; border: 1px solid #2ECC8A22; border-radius: 4px; padding: 12px 16px; margin-bottom: 32px; display: flex; align-items: center; gap: 12px; font-family: 'DM Mono', monospace; font-size: 11px; color: #5A9A7A; }
+.ref-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--vivid-green); flex-shrink: 0; }
 .run-section { margin-bottom: 32px; }
 .run-btn { width: 100%; padding: 18px; background: var(--vivid-orange); border: none; border-radius: 4px; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: white; cursor: pointer; transition: opacity 0.2s, transform 0.1s; }
 .run-btn:hover:not(:disabled) { opacity: 0.9; }
@@ -147,27 +147,19 @@ body { font-family: 'Syne', sans-serif; background: var(--vivid-dark); color: va
     <label class="upload-card optional" id="card-p8"><div class="upload-tag">Plans 8</div><div class="upload-name">Plan Set H</div><div class="upload-hint" id="sub-p8">Click to upload PDF</div><div class="upload-size" id="size-p8"></div><input type="file" accept=".pdf" id="file-p8" onchange="handlePlan(this,'p8')"></label>
   </div>
 
-  <hr class="divider">
+  <div class="ref-banner">
+    <div class="ref-dot"></div>
+    Scope Playbook + Project Rules loaded automatically by server
+  </div>
 
   <div class="section-head">
     <span class="section-num">02 —</span>
-    <span class="section-title">Reference Documents</span>
-    <span class="section-sub">Both required</span>
-  </div>
-
-  <div class="ref-grid">
-    <label class="upload-card" id="card-playbook"><div class="upload-tag">Required</div><div class="upload-name">Scope Playbook</div><div class="upload-hint" id="sub-playbook">VIVID_Master_Scope_Playbook.pdf</div><input type="file" accept=".pdf" id="file-playbook" onchange="handleRef(this,'playbook')"></label>
-    <label class="upload-card" id="card-rules"><div class="upload-tag">Required</div><div class="upload-name">Project Rules</div><div class="upload-hint" id="sub-rules">VIVID_Universal_Project_Rules.pdf</div><input type="file" accept=".pdf" id="file-rules" onchange="handleRef(this,'rules')"></label>
-  </div>
-
-  <div class="section-head">
-    <span class="section-num">03 —</span>
     <span class="section-title">Run Analysis</span>
   </div>
 
   <div class="run-section">
     <div class="progress-bar-wrap" id="progress-wrap"><div class="progress-bar" id="progress-bar"></div></div>
-    <div class="status-line" id="status-line">Upload at least 1 plan set + both reference documents to begin</div>
+    <div class="status-line" id="status-line">Upload at least 1 plan set to begin</div>
     <button class="run-btn" id="run-btn" onclick="runAnalysis()" disabled>Run Preconstruction Analysis</button>
   </div>
 
@@ -198,12 +190,10 @@ body { font-family: 'Syne', sans-serif; background: var(--vivid-dark); color: va
 </div>
 
 <script>
-
 const MAKE_WEBHOOK = 'https://hook.us2.make.com/vrkmnwcc2lwqsg4pu8rr5x3uo3akthhx';
 const MAX_MB = 32;
 const planKeys = ['p1','p2','p3','p4','p5','p6','p7','p8'];
 const plans = {};
-
 let resultJSON = null;
 
 function formatMB(bytes) { return (bytes/1024/1024).toFixed(1)+' MB'; }
@@ -228,22 +218,13 @@ function handlePlan(input, key) {
   checkReady();
 }
 
-function handleRef(input, key) {
-  const file = input.files[0];
-  if (!file) return;
-  refs[key] = file;
-  document.getElementById('card-'+key).classList.add('has-file');
-  document.getElementById('sub-'+key).textContent = file.name.length > 28 ? file.name.slice(0,26)+'…' : file.name;
-  checkReady();
-}
-
 function checkReady() {
   const hasPlans = planKeys.some(k => plans[k]);
-  const ready = hasPlans;
-  document.getElementById('run-btn').disabled = !ready;
-  if (ready) {
+  document.getElementById('run-btn').disabled = !hasPlans;
+  if (hasPlans) {
     const count = planKeys.filter(k => plans[k]).length;
-setStatus(count+' plan file'+(count>1?'s':'')+' loaded — ready to analyze', false);  }
+    setStatus(count+' plan file'+(count>1?'s':'')+' loaded — ready to analyze', false);
+  }
 }
 
 function switchTab(name) {
@@ -281,7 +262,7 @@ async function toBase64(file) {
 }
 
 async function postRelay(data) {
-  const res = await fetch(RELAY_URL, {
+  const res = await fetch('/relay', {
     method: 'POST',
     headers: {'Content-Type':'application/json'},
     body: JSON.stringify({_webhookUrl: MAKE_WEBHOOK, _data: data})
@@ -305,7 +286,6 @@ async function runAnalysis() {
 
   try {
     const planB64s = await Promise.all(activePlans.map(k => toBase64(plans[k])));
-    const [playbookB64, rulesB64] = await Promise.all([toBase64(refs.playbook), toBase64(refs.rules)]);
 
     const planDocs = planB64s.map((b64,i) => ({
       type: 'document',
@@ -323,22 +303,12 @@ CRITICAL RULES: 1. takeoff_packages MUST be ordered by construction sequence. 2.
     const response = await fetch('/analyze', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 8000,
-        system: systemPrompt,
-        messages: [{role:'user', content:[
-          ...planDocs,
-          {type:'document', source:{type:'base64', media_type:'application/pdf', data:playbookB64}, title:'VIVID Master Scope Playbook'},
-          {type:'document', source:{type:'base64', media_type:'application/pdf', data:rulesB64}, title:'VIVID Universal Project Rules'},
-          {type:'text', text:`Analyze all ${activePlans.length+2} documents and generate the VIVID master preconstruction JSON.`}
-        ]}]
-      })
+      body: JSON.stringify({ planDocs, activePlanCount: activePlans.length, systemPrompt })
     });
 
     clearInterval(stepTimer);
     setProgress(95);
-    if (!response.ok) { const err = await response.json(); throw new Error(err.error?.message||'API error '+response.status); }
+    if (!response.ok) { const err = await response.json(); throw new Error(err.error?.message||err.error||'API error '+response.status); }
     const data = await response.json();
     const rawText = data.content.map(b=>b.text||'').join('').trim();
     const cleaned = rawText.replace(/^```json\s*/,'').replace(/^```\s*/,'').replace(/```\s*$/,'').trim();
