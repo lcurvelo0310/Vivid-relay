@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 
 const PORT = process.env.PORT || 3000;
+const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 
 const HTML = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8');
 
@@ -26,7 +27,52 @@ const server = http.createServer((req, res) => {
 
   if (req.method === 'GET' && req.url === '/health') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ status: 'ok' }));
+    res.end(JSON.stringify({ status: 'ok', service: 'VIVID relay' }));
+    return;
+  }
+
+  if (req.method === 'POST' && req.url === '/analyze') {
+    let body = '';
+    req.on('data', chunk => body += chunk.toString());
+    req.on('end', () => {
+      let payload;
+      try { payload = JSON.parse(body); }
+      catch (e) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Invalid JSON' }));
+        return;
+      }
+
+      const outBody = JSON.stringify(payload);
+      const options = {
+        hostname: 'api.anthropic.com',
+        path: '/v1/messages',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(outBody),
+          'x-api-key': ANTHROPIC_API_KEY,
+          'anthropic-version': '2023-06-01'
+        }
+      };
+
+      const proxyReq = https.request(options, proxyRes => {
+        let responseBody = '';
+        proxyRes.on('data', chunk => responseBody += chunk.toString());
+        proxyRes.on('end', () => {
+          res.writeHead(proxyRes.statusCode, { 'Content-Type': 'application/json' });
+          res.end(responseBody);
+        });
+      });
+
+      proxyReq.on('error', err => {
+        res.writeHead(502, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Failed to reach Anthropic', detail: err.message }));
+      });
+
+      proxyReq.write(outBody);
+      proxyReq.end();
+    });
     return;
   }
 
