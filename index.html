@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--orange:#E85D26;--dark:#1A1A1A;--mid:#2E2E2E;--light:#F5F0E8;--muted:#8A8A8A;--green:#2ECC8A;--red:#E84040;--amber:#F0A500;--blue:#3B82F6}
+:root{--orange:#E85D26;--dark:#1A1A1A;--mid:#2E2E2E;--light:#F5F0E8;--muted:#8A8A8A;--green:#2ECC8A;--red:#E84040;--amber:#F0A500;--blue:#3B82F6;--purple:#A855F7}
 body{font-family:'Syne',sans-serif;background:var(--dark);color:var(--light);min-height:100vh}
 .hdr{border-bottom:1px solid #333;padding:20px 32px;display:flex;align-items:center;justify-content:space-between}
 .logo{display:flex;align-items:center;gap:12px}
@@ -56,20 +56,25 @@ body{font-family:'Syne',sans-serif;background:var(--dark);color:var(--light);min
 .merror{background:#2E1A1A;border:1px solid #E8404044;color:#E84040}
 .results{display:none}
 .results.vis{display:block}
-.rhdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid #333}
+.rhdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid #333;flex-wrap:wrap;gap:12px}
 .rtitle{font-size:18px;font-weight:700}
 .rtype{font-family:'DM Mono',monospace;font-size:11px;color:var(--orange);padding:4px 10px;border:1px solid var(--orange);border-radius:20px}
-.tabs{display:flex;border-bottom:1px solid #333;margin-bottom:24px}
-.tab{padding:10px 20px;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .15s}
+.tabs{display:flex;border-bottom:1px solid #333;margin-bottom:24px;overflow-x:auto;gap:0}
+.tab{padding:10px 18px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .15s;white-space:nowrap;flex-shrink:0}
 .tab:hover{color:var(--light)}
 .tab.act{color:var(--light);border-bottom-color:var(--orange)}
 .tc{display:none}
 .tc.act{display:block}
+
+/* Summary */
 .narr{background:var(--mid);border-left:3px solid var(--orange);padding:20px 24px;border-radius:0 4px 4px 0;margin-bottom:24px;font-size:14px;line-height:1.7;color:#C8C0B0}
-.mgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.mgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
 .mc{background:var(--mid);border:1px solid #3A3A3A;border-radius:4px;padding:14px 16px}
 .ml{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}
 .mv{font-size:13px;font-weight:600;color:var(--light)}
+.mv.small{font-size:11px;font-weight:400;color:#B0A898;line-height:1.5}
+
+/* RFIs */
 .rfi{background:var(--mid);border:1px solid #3A3A3A;border-radius:4px;padding:18px 20px;margin-bottom:12px;position:relative;overflow:hidden}
 .rfi::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%}
 .rfi-critical::before{background:var(--red)}
@@ -84,28 +89,135 @@ body{font-family:'Syne',sans-serif;background:var(--dark);color:var(--light);min
 .bm{background:#1A1E2E;color:var(--blue);border:1px solid #3B82F633}
 .bl{background:#252525;color:var(--muted);border:1px solid #55555533}
 .rtrade{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-left:auto}
-.rq{font-size:14px;font-weight:600;margin-bottom:10px;line-height:1.5}
+.rq{font-size:14px;font-weight:600;margin-bottom:8px;line-height:1.5}
+.rowner{font-size:12px;color:#8A9A8A;font-style:italic;margin-bottom:10px;line-height:1.5;padding:8px 12px;background:#242E24;border-radius:2px}
 .rmeta{display:flex;gap:20px;flex-wrap:wrap;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-bottom:12px}
 .rmeta span{display:flex;gap:6px}
 .rmeta span b{color:#888;font-weight:400}
 .cbtn{font-family:'DM Mono',monospace;font-size:11px;padding:6px 12px;background:transparent;border:1px solid #3A3A3A;border-radius:2px;color:var(--muted);cursor:pointer;transition:border-color .15s,color .15s;text-transform:uppercase;letter-spacing:.05em}
 .cbtn:hover{border-color:#666;color:var(--light)}
-.jbox{font-family:'DM Mono',monospace;font-size:11px;background:#141414;border:1px solid #333;border-radius:4px;padding:20px;max-height:500px;overflow-y:auto;white-space:pre-wrap;color:#8A9B8A;line-height:1.6}
-.arow{display:flex;gap:12px;margin-top:24px;padding-top:24px;border-top:1px solid #333}
-.abtn{flex:1;padding:12px;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;background:transparent;border:1px solid #3A3A3A;border-radius:4px;color:var(--light);cursor:pointer;transition:border-color .15s,background .15s}
+
+/* Brand */
+.brand-card{background:var(--mid);border:1px solid #3A3A3A;border-radius:4px;padding:24px;margin-bottom:24px}
+.brand-header{display:flex;align-items:center;gap:16px;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid #333}
+.brand-name{font-size:22px;font-weight:800}
+.brand-seg{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.15em}
+.color-row{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.cswatch{display:flex;flex-direction:column;gap:6px;align-items:center}
+.cbox{width:48px;height:48px;border-radius:4px;border:1px solid #3A3A3A}
+.clabel{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);text-transform:uppercase}
+.chex{font-family:'DM Mono',monospace;font-size:10px;color:var(--light)}
+.font-row{display:flex;gap:24px;margin-bottom:20px;flex-wrap:wrap}
+.font-item{flex:1;min-width:160px}
+.font-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px}
+.font-name{font-size:14px;font-weight:600}
+.hero-prompt{background:#141414;border:1px solid #333;border-radius:4px;padding:16px;font-family:'DM Mono',monospace;font-size:11px;color:#8A9B8A;line-height:1.6;white-space:pre-wrap}
+
+/* Cost Model */
+.cost-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
+.cost-big{background:var(--mid);border:1px solid #3A3A3A;border-radius:4px;padding:20px}
+.cost-big.highlight{border-color:var(--orange)44;background:#2E1E14}
+.cb-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px}
+.cb-val{font-size:24px;font-weight:800;color:var(--light)}
+.cb-val.orange{color:var(--orange)}
+.cb-sub{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:4px}
+.scenarios{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
+.scen{background:var(--mid);border:1px solid #3A3A3A;border-radius:4px;padding:16px;text-align:center}
+.scen-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px}
+.scen-val{font-size:18px;font-weight:700}
+.scen.best .scen-val{color:var(--green)}
+.scen.likely .scen-val{color:var(--amber)}
+.scen.full .scen-val{color:var(--red)}
+.div-table{width:100%;border-collapse:collapse;font-size:12px}
+.div-table th{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding:8px 12px;border-bottom:1px solid #333;text-align:left}
+.div-table td{padding:10px 12px;border-bottom:1px solid #222;font-family:'DM Mono',monospace;font-size:11px}
+.div-table tr:hover td{background:#333}
+.basis-tag{font-size:9px;padding:2px 6px;border-radius:2px;text-transform:uppercase;letter-spacing:.05em}
+.b-spec{background:#1A2E24;color:var(--green);border:1px solid #2ECC8A33}
+.b-allow{background:#2E2010;color:var(--amber);border:1px solid #F0A50033}
+.b-plug{background:#1A1E2E;color:var(--blue);border:1px solid #3B82F633}
+.b-mixed{background:#252525;color:var(--muted);border:1px solid #55555533}
+
+/* Finish Matrix */
+.matrix-table{width:100%;border-collapse:collapse;font-size:12px}
+.matrix-table th{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding:8px 12px;border-bottom:1px solid #333;text-align:left}
+.matrix-table td{padding:10px 12px;border-bottom:1px solid #222;font-size:12px}
+.matrix-table tr:hover td{background:#333}
+.status-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px}
+.dot-specified{background:var(--green)}
+.dot-partial{background:var(--amber)}
+.dot-allowance{background:var(--blue)}
+
+/* Procurement */
+.proc-card{background:var(--mid);border:1px solid #3A3A3A;border-radius:4px;padding:16px 20px;margin-bottom:10px;display:flex;gap:16px;align-items:flex-start}
+.proc-card.hard-stop{border-color:var(--red)44;background:#2E1A1A}
+.proc-hs{font-family:'DM Mono',monospace;font-size:9px;color:var(--red);text-transform:uppercase;letter-spacing:.1em;padding:2px 6px;border:1px solid var(--red)44;border-radius:2px;white-space:nowrap;flex-shrink:0;margin-top:2px}
+.proc-main{flex:1}
+.proc-item{font-size:14px;font-weight:700;margin-bottom:4px}
+.proc-reason{font-size:12px;color:#B0A898;margin-bottom:8px;line-height:1.5}
+.proc-action{font-size:12px;color:var(--green);margin-bottom:8px}
+.proc-meta{display:flex;gap:16px;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);flex-wrap:wrap}
+.proc-meta span b{color:#888;font-weight:400}
+
+/* Schedule */
+.schedule-bar{margin-bottom:24px}
+.milestone-list{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
+.ms-card{background:var(--mid);border:1px solid #3A3A3A;border-radius:4px;padding:14px 16px;border-top:2px solid var(--orange)}
+.ms-name{font-size:12px;font-weight:600;margin-bottom:4px}
+.ms-week{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)}
+.ms-date{font-family:'DM Mono',monospace;font-size:11px;color:var(--orange);margin-top:2px}
+.task-table{width:100%;border-collapse:collapse;font-size:12px}
+.task-table th{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding:8px 12px;border-bottom:1px solid #333;text-align:left}
+.task-table td{padding:8px 12px;border-bottom:1px solid #222;font-family:'DM Mono',monospace;font-size:11px}
+.task-table tr:hover td{background:#333}
+.hs-flag{color:var(--red);font-size:9px;margin-left:4px}
+
+/* Scope Gaps */
+.gap-card{background:var(--mid);border:1px solid #F0A50033;border-left:3px solid var(--amber);border-radius:0 4px 4px 0;padding:16px 20px;margin-bottom:10px}
+.gap-title{font-size:13px;font-weight:700;color:var(--amber);margin-bottom:6px}
+.gap-trades{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:8px}
+.gap-rec{font-size:12px;color:#C8C0B0;line-height:1.5}
+
+/* Proposal */
+.prop-hero{background:var(--mid);border:1px solid #3A3A3A;border-radius:4px;padding:32px;margin-bottom:24px;text-align:center;border-top:3px solid var(--orange)}
+.prop-headline{font-size:24px;font-weight:800;margin-bottom:8px;line-height:1.3}
+.prop-sub{font-size:14px;color:#B0A898;margin-bottom:20px}
+.prop-cost-range{display:flex;justify-content:center;gap:32px;margin-bottom:16px}
+.pcr-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px}
+.pcr-val{font-size:20px;font-weight:800;color:var(--orange)}
+.prop-disclaimer{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);line-height:1.5}
+.prop-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.prop-section{background:var(--mid);border:1px solid #3A3A3A;border-radius:4px;padding:20px}
+.prop-section-title{font-family:'DM Mono',monospace;font-size:10px;color:var(--orange);text-transform:uppercase;letter-spacing:.15em;margin-bottom:16px}
+.prop-item{margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid #333}
+.prop-item:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none}
+.prop-item-title{font-size:13px;font-weight:700;margin-bottom:4px}
+.prop-item-desc{font-size:12px;color:#B0A898;line-height:1.5}
+.prop-rfi-card{background:#2E2010;border:1px solid #F0A50022;border-radius:4px;padding:14px 16px;margin-bottom:10px}
+.prop-rfi-num{font-family:'DM Mono',monospace;font-size:10px;color:var(--amber);margin-bottom:4px}
+.prop-rfi-item{font-size:13px;font-weight:600;margin-bottom:4px}
+.prop-rfi-why{font-size:12px;color:#B0A898;margin-bottom:6px;line-height:1.5}
+.prop-rfi-impact{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)}
+
+/* JSON */
+.jbox{font-family:'DM Mono',monospace;font-size:11px;background:#141414;border:1px solid #333;border-radius:4px;padding:20px;max-height:600px;overflow-y:auto;white-space:pre-wrap;color:#8A9B8A;line-height:1.6}
+.arow{display:flex;gap:12px;margin-top:24px;padding-top:24px;border-top:1px solid #333;flex-wrap:wrap}
+.abtn{flex:1;min-width:120px;padding:12px;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;background:transparent;border:1px solid #3A3A3A;border-radius:4px;color:var(--light);cursor:pointer;transition:border-color .15s,background .15s}
 .abtn:hover:not(:disabled){border-color:#666;background:#2A2A2A}
 .abtn:disabled{opacity:.4;cursor:not-allowed}
 .abtn.ok{border-color:#2ECC8A44;color:var(--green);background:#1A2E24}
 .abtn.err{border-color:#E8404044;color:var(--red);background:#2E1A1A}
+.section-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--orange);text-transform:uppercase;letter-spacing:.15em;margin-bottom:12px;margin-top:24px}
+@media(max-width:768px){.pgrid{grid-template-columns:repeat(2,1fr)}.mgrid,.cost-summary,.scenarios,.milestone-list,.prop-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div class="hdr">
   <div class="logo">
     <div class="lmark">VCG</div>
-    <div><div class="ltxt">VIVID Construction Group</div><div class="lsub">Preconstruction Analyzer</div></div>
+    <div><div class="ltxt">VIVID Construction Group</div><div class="lsub">Preconstruction Analyzer v4</div></div>
   </div>
-  <div class="spill"><div class="sdot"></div>Relay online</div>
+  <div class="spill"><div class="sdot"></div>Relay online · Schema v4.0</div>
 </div>
 <div class="body">
   <div class="shead">
@@ -123,7 +235,7 @@ body{font-family:'Syne',sans-serif;background:var(--dark);color:var(--light);min
     <label class="ucard opt" id="cp7"><div class="utag">Plans 7</div><div class="uname">Plan Set G</div><div class="uhint" id="sp7">Click to upload PDF</div><div class="usize" id="sz7"></div><input type="file" accept=".pdf" onchange="hp(this,'p7')"></label>
     <label class="ucard opt" id="cp8"><div class="utag">Plans 8</div><div class="uname">Plan Set H</div><div class="uhint" id="sp8">Click to upload PDF</div><div class="usize" id="sz8"></div><input type="file" accept=".pdf" onchange="hp(this,'p8')"></label>
   </div>
-  <div class="rbanner"><div class="rdot"></div>Scope Playbook + Project Rules loaded automatically by server</div>
+  <div class="rbanner"><div class="rdot"></div>Scope Playbook + Project Rules loaded automatically · Schema v4.0 active</div>
   <div class="shead"><span class="snum">02 —</span><span class="stitle">Run Analysis</span></div>
   <div class="runsec">
     <div class="pbwrap" id="pw"><div class="pb" id="pb"></div></div>
@@ -132,17 +244,92 @@ body{font-family:'Syne',sans-serif;background:var(--dark);color:var(--light);min
   </div>
   <div class="mbanner" id="mb"></div>
   <div class="results" id="res">
-    <div class="rhdr"><div class="rtitle" id="rtn">Analysis Results</div><div class="rtype" id="rtp">—</div></div>
+    <div class="rhdr">
+      <div class="rtitle" id="rtn">Analysis Results</div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <div class="rtype" id="rtp">—</div>
+        <div class="rtype" id="rslug" style="color:var(--muted);border-color:#444">—</div>
+      </div>
+    </div>
     <div class="tabs">
       <div class="tab act" onclick="st('summary')">Summary</div>
-      <div class="tab" onclick="st('rfis')">RFIs & RFPs</div>
-      <div class="tab" onclick="st('json')">JSON Output</div>
+      <div class="tab" onclick="st('rfis')">RFIs</div>
+      <div class="tab" onclick="st('brand')">Brand</div>
+      <div class="tab" onclick="st('cost')">Cost Model</div>
+      <div class="tab" onclick="st('finishes')">Finishes</div>
+      <div class="tab" onclick="st('procurement')">Procurement</div>
+      <div class="tab" onclick="st('schedule')">Schedule</div>
+      <div class="tab" onclick="st('gaps')">Scope Gaps</div>
+      <div class="tab" onclick="st('proposal')">Proposal</div>
+      <div class="tab" onclick="st('json')">JSON</div>
     </div>
-    <div class="tc act" id="t-summary"><div class="narr" id="narr">—</div><div class="mgrid" id="mg"></div></div>
+
+    <!-- SUMMARY -->
+    <div class="tc act" id="t-summary">
+      <div class="narr" id="narr">—</div>
+      <div class="section-label">Project Identity</div>
+      <div class="mgrid" id="mg"></div>
+      <div class="section-label" id="mat-label" style="display:none">Specified Materials</div>
+      <div id="mat-list"></div>
+      <div class="section-label" id="cond-label" style="display:none">Planning Conditions</div>
+      <div id="cond-list"></div>
+    </div>
+
+    <!-- RFIs -->
     <div class="tc" id="t-rfis"><div id="rl"></div></div>
+
+    <!-- BRAND -->
+    <div class="tc" id="t-brand">
+      <div class="brand-card" id="brand-content"></div>
+    </div>
+
+    <!-- COST MODEL -->
+    <div class="tc" id="t-cost">
+      <div class="cost-summary" id="cost-summary"></div>
+      <div class="section-label">Scenarios</div>
+      <div class="scenarios" id="scenarios"></div>
+      <div class="section-label">Division Breakdown</div>
+      <table class="div-table">
+        <thead><tr><th>Division</th><th>Name</th><th>Total</th><th>Basis</th></tr></thead>
+        <tbody id="div-body"></tbody>
+      </table>
+    </div>
+
+    <!-- FINISHES -->
+    <div class="tc" id="t-finishes">
+      <table class="matrix-table">
+        <thead><tr><th>Zone</th><th>Item</th><th>Product</th><th>Status</th><th>Allowance Range</th><th>Sheet</th></tr></thead>
+        <tbody id="finish-body"></tbody>
+      </table>
+    </div>
+
+    <!-- PROCUREMENT -->
+    <div class="tc" id="t-procurement"><div id="proc-list"></div></div>
+
+    <!-- SCHEDULE -->
+    <div class="tc" id="t-schedule">
+      <div class="mgrid" id="sched-meta"></div>
+      <div class="section-label">Milestones</div>
+      <div class="milestone-list" id="milestone-list"></div>
+      <div class="section-label">Task List</div>
+      <table class="task-table">
+        <thead><tr><th>ID</th><th>Phase</th><th>Task</th><th>Start</th><th>Duration</th><th>Type</th></tr></thead>
+        <tbody id="task-body"></tbody>
+      </table>
+    </div>
+
+    <!-- SCOPE GAPS -->
+    <div class="tc" id="t-gaps"><div id="gap-list"></div></div>
+
+    <!-- PROPOSAL -->
+    <div class="tc" id="t-proposal"><div id="proposal-content"></div></div>
+
+    <!-- JSON -->
     <div class="tc" id="t-json"><div class="jbox" id="jb"></div></div>
+
     <div class="arow">
       <button class="abtn" id="cpb" onclick="cpj()">Copy JSON</button>
+      <button class="abtn" id="dlb" onclick="dlj()">Download JSON</button>
       <button class="abtn" id="wb" onclick="send()">Resend to Make.com</button>
     </div>
   </div>
@@ -175,7 +362,8 @@ function cr(){
 }
 
 function st(n){
-  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('act',['summary','rfis','json'][i]===n));
+  const tabs=['summary','rfis','brand','cost','finishes','procurement','schedule','gaps','proposal','json'];
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('act',tabs[i]===n));
   document.querySelectorAll('.tc').forEach(c=>c.classList.remove('act'));
   document.getElementById('t-'+n).classList.add('act');
 }
@@ -184,6 +372,7 @@ function ss(t,a){const e=document.getElementById('sl');e.textContent=t;e.classLi
 function sp(p){document.getElementById('pw').classList.toggle('vis',p>0&&p<100);document.getElementById('pb').style.width=p+'%';}
 function sm(t,tp){const e=document.getElementById('mb');e.textContent=t;e.className='mbanner vis m'+tp;}
 function hm(){document.getElementById('mb').classList.remove('vis');}
+function fmt$(n){return n?'$'+Math.round(n).toLocaleString():'—';}
 
 async function b64(f){return new Promise((r,j)=>{const x=new FileReader();x.onload=()=>r(x.result.split(',')[1]);x.onerror=j;x.readAsDataURL(f);});}
 
@@ -191,15 +380,13 @@ async function run(){
   const btn=document.getElementById('rb');
   btn.disabled=true;btn.textContent='Analyzing…';hm();sp(5);
   const active=KEYS.filter(k=>plans[k]);
-  const steps=[[10,'Reading project plans…'],[25,'Applying VIVID standards…'],[45,'Identifying RFIs and hard stops…'],[65,'Building takeoff packages…'],[80,'Generating master JSON…'],[92,'Finalizing output…']];
+  const steps=[[10,'Reading project plans…'],[20,'Identifying brand standards…'],[35,'Applying VIVID scope rules…'],[50,'Building cost model…'],[65,'Generating RFIs and procurement flags…'],[75,'Building Gantt logic…'],[85,'Drafting owner proposal…'],[93,'Finalizing v4 JSON…']];
   let si=0;ss(steps[0][1],true);sp(steps[0][0]);
   const t=setInterval(()=>{si=Math.min(si+1,steps.length-1);ss(steps[si][1],true);sp(steps[si][0]);},9000);
   try{
     const b64s=await Promise.all(active.map(k=>b64(plans[k])));
     const planDocs=b64s.map((d,i)=>({type:'document',source:{type:'base64',media_type:'application/pdf',data:d},title:'Project Plans '+(i+1)+' of '+active.length}));
-    const systemPrompt=`You are the VIVID Construction Group preconstruction analysis AI. Analyze all provided documents and produce ONLY a single valid JSON object. No markdown, no backticks, no explanation — only raw JSON.\n\nSchema:\n{"plain_english_summary":{"project_name":"string","project_type":"string","narrative":"string","critical_rfi_summary":["string"]},"project_identity":{"project_name":"string","project_address":"string","owner_name":"string","building_type":"string","construction_type":"string","stories":0,"gross_sf":0,"key_or_unit_count":0,"structural_system":"string","exterior_envelope_summary":"string","hvac_system_summary":"string","permit_status":"string"},"critical_rfis":[{"rfi_number":"string","priority":"Critical|High|Medium|Low","trade_affected":"string","question":"string","cost_impact_range":"string","source_sheet":"string","directed_to":"string","status":"Open"}],"gantt_logic":{"tasks":[{"id":0,"phase_id":"string","text":"string","start_date":"YYYY-MM-DD","duration":0,"parent":0,"type":"task|project|milestone","open":true,"vivid_hard_stop":false}],"links":[{"id":0,"source":0,"target":0,"type":"0"}]},"takeoff_packages":[{"id":"string","order":0,"division":"string","name":"string","color":"string","groups":[{"type":"AREA|LINEAR|COUNT|VOLUME","items":[{"id":"string","linked_gantt_id":0,"name":"string","unit":"SF|LF|CY|EA|LS","sourceSheet":"string","notes":"string"}]}]}]}\n\nRULES: takeoff_packages ordered by construction sequence. Every gantt task has phase_id 01-11. Every takeoff item has linked_gantt_id. Output ONLY JSON.`;
-
-    const r=await fetch('/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({planDocs,activePlanCount:active.length,systemPrompt})});
+    const r=await fetch('/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({planDocs,activePlanCount:active.length})});
     clearInterval(t);sp(95);
     if(!r.ok){const e=await r.json();throw new Error(e.error||'API error '+r.status);}
     const d=await r.json();
@@ -211,26 +398,151 @@ async function run(){
     try{
       await fetch('/relay',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({_webhookUrl:MAKE,_data:rj})});
       ss('Analysis complete — sent to Make.com',false);
-      sm('✓ JSON delivered to Make.com. Your Google Drive project folder is being created.','success');
+      sm('✓ v4 JSON delivered to Make.com. Your project folder is being created.','success');
     }catch(we){ss('Analysis complete — webhook failed',false);sm('Analysis done but Make.com failed: '+we.message,'error');}
   }catch(e){clearInterval(t);sp(0);ss('Analysis failed',false);sm('Error: '+e.message,'error');}
   btn.disabled=false;btn.textContent='Run Preconstruction Analysis';
 }
 
 function render(j){
-  const s=j.plain_english_summary||{},p=j.project_identity||{};
-  document.getElementById('rtn').textContent=s.project_name||'Analysis Results';
-  document.getElementById('rtp').textContent=s.project_type||'—';
+  const s=j.plain_english_summary||{};
+  const p=j.project_identity||{};
+  const b=j.brand_research||{};
+  const cm=j.cost_model||{};
+  const g=j.gantt_logic||{};
+  const prop=j.proposal||{};
+
+  // Header
+  document.getElementById('rtn').textContent=s.project_name||p.project_name||'Analysis Results';
+  document.getElementById('rtp').textContent=s.project_type||p.building_type||'—';
+  document.getElementById('rslug').textContent=p.project_slug||'—';
+
+  // SUMMARY
   document.getElementById('narr').textContent=s.narrative||'—';
-  const mf=[['Address',p.project_address],['Owner',p.owner_name],['Construction type',p.construction_type],['Stories',p.stories],['Gross SF',p.gross_sf?p.gross_sf.toLocaleString()+' SF':'—'],['Units/keys',p.key_or_unit_count],['Structural',p.structural_system],['HVAC',p.hvac_system_summary],['Permit',p.permit_status]];
+  const mf=[
+    ['Address',p.project_address],['Owner',p.owner_name],['Architect',p.architect_name],
+    ['Construction Type',p.construction_type],['Stories',p.stories],
+    ['Gross SF',p.gross_sf?p.gross_sf.toLocaleString()+' SF':'—'],
+    ['Units / Keys',p.key_or_unit_count||'—'],['Foundation',p.foundation_type],
+    ['Structural',p.structural_system],['Roofing',p.roofing_system],
+    ['HVAC',p.hvac_system_summary],['Fire Suppression',p.fire_suppression],
+    ['Elevator',p.elevator===true?'Yes':'No'],['Seismic Category',p.seismic_category],
+    ['Wind Speed',p.wind_speed],['Permit Status',p.permit_status]
+  ];
   document.getElementById('mg').innerHTML=mf.map(([l,v])=>`<div class="mc"><div class="ml">${l}</div><div class="mv">${v||'—'}</div></div>`).join('');
+
+  // Specified Materials
+  if((p.specified_materials||[]).length){
+    document.getElementById('mat-label').style.display='';
+    document.getElementById('mat-list').innerHTML=`<table class="matrix-table"><thead><tr><th>Item</th><th>Specification</th><th>Sheet</th></tr></thead><tbody>${(p.specified_materials).map(m=>`<tr><td>${m.item||'—'}</td><td>${m.spec||'—'}</td><td style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">${m.source_sheet||'—'}</td></tr>`).join('')}</tbody></table>`;
+  }
+
+  // Planning Conditions
+  if((p.planning_conditions||[]).length){
+    document.getElementById('cond-label').style.display='';
+    document.getElementById('cond-list').innerHTML=(p.planning_conditions).map(c=>`<div style="background:var(--mid);border:1px solid #3A3A3A;border-radius:4px;padding:12px 16px;margin-bottom:8px;font-size:12px;color:#C8C0B0;line-height:1.5">${c}</div>`).join('');
+  }
+
+  // RFIs
   const rl=document.getElementById('rl');rl.innerHTML='';
   (j.critical_rfis||[]).forEach(r=>{
     const pr=(r.priority||'medium').toLowerCase();
     const d=document.createElement('div');d.className='rfi rfi-'+pr;
-    d.innerHTML=`<div class="rtop"><span class="rid">${r.rfi_number}</span><span class="rbadge b${pr.charAt(0)}">${r.priority}</span><span class="rtrade">${r.trade_affected}</span></div><div class="rq">${r.question}</div><div class="rmeta"><span><b>Sheet </b>${r.source_sheet||'—'}</span><span><b>To </b>${r.directed_to||'—'}</span><span><b>Cost </b>${r.cost_impact_range||'—'}</span><span><b>Status </b>${r.status}</span></div><button class="cbtn" onclick='crfi(this,${JSON.stringify(r)})'>Copy for Building Connected</button>`;
+    d.innerHTML=`<div class="rtop"><span class="rid">${r.rfi_number}</span><span class="rbadge b${pr.charAt(0)}">${r.priority}</span><span class="rtrade">${r.trade_affected}</span></div><div class="rq">${r.question}</div>${r.owner_framing?`<div class="rowner">💬 Owner framing: ${r.owner_framing}</div>`:''}<div class="rmeta"><span><b>Sheet </b>${r.source_sheet||'—'}</span><span><b>To </b>${r.directed_to||'—'}</span><span><b>Cost </b>${r.cost_impact_range||'—'}</span><span><b>Status </b>${r.status}</span></div><button class="cbtn" onclick='crfi(this,${JSON.stringify(r)})'>Copy for Building Connected</button>`;
     rl.appendChild(d);
   });
+
+  // BRAND
+  const bc=document.getElementById('brand-content');
+  if(b.brand_identified){
+    bc.innerHTML=`
+      <div class="brand-header">
+        <div>
+          <div class="brand-name">${b.brand_name||'—'}</div>
+          <div class="brand-seg">${b.brand_segment||'—'} · ${b.prototype_version||'—'}</div>
+          ${b.brand_tagline?`<div style="font-size:12px;color:var(--muted);margin-top:4px;font-style:italic">"${b.brand_tagline}"</div>`:''}
+        </div>
+      </div>
+      <div class="section-label">Brand Colors</div>
+      <div class="color-row">
+        ${[['Primary',b.primary_color],['Secondary',b.secondary_color],['Accent',b.accent_color],['Website BG',b.website_bg_color],['Website Accent',b.website_accent_color],['Proposal BG',b.proposal_bg_color],['Proposal Accent',b.proposal_accent_color]].map(([l,c])=>c?`<div class="cswatch"><div class="cbox" style="background:${c}"></div><div class="clabel">${l}</div><div class="chex">${c}</div></div>`:'').join('')}
+      </div>
+      <div class="section-label">Typography</div>
+      <div class="font-row">
+        <div class="font-item"><div class="font-label">Heading Font</div><div class="font-name">${b.website_heading_font||b.official_font||'—'}</div></div>
+        <div class="font-item"><div class="font-label">Body Font</div><div class="font-name">${b.website_body_font||'—'}</div></div>
+        <div class="font-item"><div class="font-label">Target Demographic</div><div class="font-name" style="font-size:12px;font-weight:400">${b.target_demographic||'—'}</div></div>
+        <div class="font-item"><div class="font-label">Design Philosophy</div><div class="font-name" style="font-size:12px;font-weight:400">${b.design_philosophy||'—'}</div></div>
+      </div>
+      ${b.hero_image_prompt?`<div class="section-label">Hero Image Prompt</div><div class="hero-prompt">${b.hero_image_prompt}</div>`:''}`;
+  } else {
+    bc.innerHTML=`<div style="text-align:center;padding:40px;color:var(--muted);font-family:'DM Mono',monospace;font-size:12px">Brand not identified from documents</div>`;
+  }
+
+  // COST MODEL
+  document.getElementById('cost-summary').innerHTML=`
+    <div class="cost-big highlight"><div class="cb-label">Total ROM</div><div class="cb-val orange">${fmt$(cm.total_rom)}</div><div class="cb-sub">${cm.cost_per_sf?'$'+Math.round(cm.cost_per_sf).toLocaleString()+' / SF':''}</div></div>
+    <div class="cost-big"><div class="cb-label">Specified</div><div class="cb-val">${fmt$(cm.specified_total)}</div></div>
+    <div class="cost-big"><div class="cb-label">Allowances + Plugs</div><div class="cb-val">${fmt$((cm.allowance_total||0)+(cm.plug_total||0))}</div></div>`;
+  const sc=cm.scenarios||{};
+  document.getElementById('scenarios').innerHTML=`
+    <div class="scen best"><div class="scen-label">Best Case</div><div class="scen-val">${fmt$(sc.best_case)}</div></div>
+    <div class="scen likely"><div class="scen-label">Most Likely</div><div class="scen-val">${fmt$(sc.most_likely)}</div></div>
+    <div class="scen full"><div class="scen-label">Full Contingency</div><div class="scen-val">${fmt$(sc.full_contingency)}</div></div>`;
+  const basisClass={'Specified':'b-spec','Allowance':'b-allow','Plug':'b-plug','Mixed':'b-mixed'};
+  document.getElementById('div-body').innerHTML=(cm.divisions||[]).map(d=>`<tr><td>${d.division}</td><td>${d.name}</td><td>${fmt$(d.total)}</td><td><span class="basis-tag ${basisClass[d.basis]||'b-mixed'}">${d.basis}</span></td></tr>`).join('');
+
+  // FINISHES
+  const dotClass={'Specified':'dot-specified','Partial':'dot-partial','Allowance':'dot-allowance'};
+  document.getElementById('finish-body').innerHTML=(j.finish_spec_matrix||[]).map(f=>`<tr><td>${f.zone}</td><td>${f.item}</td><td>${f.specified_product||'—'}</td><td><span class="status-dot ${dotClass[f.status]||'dot-allowance'}"></span>${f.status}</td><td style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">${f.allowance_range||'—'}</td><td style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">${f.source_sheet||'—'}</td></tr>`).join('');
+
+  // PROCUREMENT
+  const pl=document.getElementById('proc-list');pl.innerHTML='';
+  (j.procurement_priorities||[]).sort((a,b)=>b.vivid_hard_stop-a.vivid_hard_stop).forEach(p=>{
+    const d=document.createElement('div');d.className='proc-card'+(p.vivid_hard_stop?' hard-stop':'');
+    d.innerHTML=`${p.vivid_hard_stop?'<div class="proc-hs">⚠ Hard Stop</div>':''}<div class="proc-main"><div class="proc-item">${p.item}</div><div class="proc-reason">${p.reason}</div><div class="proc-action">→ ${p.action}</div><div class="proc-meta"><span><b>Lead Time </b>${p.lead_time||'—'}</span><span><b>Order By </b>${p.order_by_date||'—'}</span></div></div>`;
+    pl.appendChild(d);
+  });
+
+  // SCHEDULE
+  document.getElementById('sched-meta').innerHTML=[
+    ['Total Duration',g.total_duration_weeks?g.total_duration_weeks+' weeks':'—'],
+    ['NTP Date',g.ntp_date||'—'],
+    ['Substantial Completion',g.substantial_completion||'—'],
+    ['Grand Opening',g.grand_opening||'—']
+  ].map(([l,v])=>`<div class="mc"><div class="ml">${l}</div><div class="mv">${v}</div></div>`).join('');
+  document.getElementById('milestone-list').innerHTML=(g.milestones||[]).map(m=>`<div class="ms-card"><div class="ms-name">${m.name}</div><div class="ms-week">Week ${m.week}</div><div class="ms-date">${m.date||'—'}</div></div>`).join('');
+  document.getElementById('task-body').innerHTML=(g.tasks||[]).filter(t=>t.type!=='project').map(t=>`<tr><td>${t.id}</td><td>${t.phase_id}</td><td>${t.text}${t.vivid_hard_stop?'<span class="hs-flag">⚠</span>':''}</td><td>${t.start_date||'—'}</td><td>${t.duration}d</td><td style="color:var(--muted)">${t.type}</td></tr>`).join('');
+
+  // SCOPE GAPS
+  document.getElementById('gap-list').innerHTML=(j.scope_gaps||[]).map(g=>`<div class="gap-card"><div class="gap-title">${g.gap}</div><div class="gap-trades">${g.trades_involved}</div><div class="gap-rec">${g.recommendation}</div></div>`).join('') || '<div style="color:var(--muted);font-family:\'DM Mono\',monospace;font-size:12px;padding:20px">No scope gaps identified</div>';
+
+  // PROPOSAL
+  const cs=prop.cost_summary||{};
+  document.getElementById('proposal-content').innerHTML=`
+    <div class="prop-hero">
+      <div class="prop-headline">${prop.headline||'—'}</div>
+      <div class="prop-sub">${prop.subheadline||'—'}</div>
+      <div class="prop-cost-range">
+        <div><div class="pcr-label">ROM Range</div><div class="pcr-val">${fmt$(cs.rom_range_low)} – ${fmt$(cs.rom_range_high)}</div></div>
+        <div><div class="pcr-label">Cost / SF</div><div class="pcr-val">${fmt$(cs.cost_per_sf_low)} – ${fmt$(cs.cost_per_sf_high)}</div></div>
+        <div><div class="pcr-label">Schedule</div><div class="pcr-val">${prop.schedule_summary?.total_weeks||'—'} wks</div></div>
+      </div>
+      ${cs.disclaimer?`<div class="prop-disclaimer">${cs.disclaimer}</div>`:''}
+    </div>
+    <div class="prop-grid">
+      <div class="prop-section">
+        <div class="prop-section-title">VIVID Approach</div>
+        ${(prop.vivid_approach||[]).map(a=>`<div class="prop-item"><div class="prop-item-title">${a.title}</div><div class="prop-item-desc">${a.description}</div></div>`).join('')}
+      </div>
+      <div class="prop-section">
+        <div class="prop-section-title">Why VIVID</div>
+        ${(prop.why_vivid||[]).map(a=>`<div class="prop-item"><div class="prop-item-title">${a.differentiator}</div><div class="prop-item-desc">${a.description}</div></div>`).join('')}
+      </div>
+    </div>
+    ${(prop.owner_rfis||[]).length?`<div class="section-label">Owner Decision Items</div>${(prop.owner_rfis).map(r=>`<div class="prop-rfi-card"><div class="prop-rfi-num">${r.rfi_number}</div><div class="prop-rfi-item">${r.item}</div><div class="prop-rfi-why">${r.why_it_matters}</div><div class="prop-rfi-impact">Cost impact: ${r.cost_impact}</div></div>`).join('')}`:''}`;
+
+  // JSON
   document.getElementById('jb').textContent=JSON.stringify(j,null,2);
   document.getElementById('res').classList.add('vis');
   st('summary');
@@ -247,6 +559,13 @@ function cpj(){
     const b=document.getElementById('cpb');b.textContent='Copied!';b.classList.add('ok');
     setTimeout(()=>{b.textContent='Copy JSON';b.classList.remove('ok');},2000);
   });
+}
+
+function dlj(){
+  if(!rj)return;
+  const slug=(rj.project_identity?.project_slug)||'vivid-project';
+  const blob=new Blob([JSON.stringify(rj,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=slug+'-v4.json';a.click();
 }
 
 async function send(){
